@@ -1,0 +1,6 @@
+@AlzaShop_HostAddress = http://localhost:5064
+
+GET {{AlzaShop_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
