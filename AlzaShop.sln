@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35707.178 d17.12
+VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlzaShop", "AlzaShop\AlzaShop.csproj", "{4D66EA7A-CA34-4D7A-ABCC-DA541E2819AD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlzaShop.Api", "AlzaShop\AlzaShop.Api.csproj", "{4D66EA7A-CA34-4D7A-ABCC-DA541E2819AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlzaShop.Core", "AlzaShop.Core\AlzaShop.Core.csproj", "{F766FC28-715A-4ABF-B652-83369C6D5DCF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{4D66EA7A-CA34-4D7A-ABCC-DA541E2819AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D66EA7A-CA34-4D7A-ABCC-DA541E2819AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D66EA7A-CA34-4D7A-ABCC-DA541E2819AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F766FC28-715A-4ABF-B652-83369C6D5DCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F766FC28-715A-4ABF-B652-83369C6D5DCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F766FC28-715A-4ABF-B652-83369C6D5DCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F766FC28-715A-4ABF-B652-83369C6D5DCF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,11 +1,9 @@
-﻿namespace AlzaShop.Dto;
+﻿namespace AlzaShop.Core.Database.Entities;
 
-public class Product
+public class Product : BaseEntity
 {
-    public int Id { get; set; }
     public string Name { get; set; }
     public string ImgUri { get; set; }
     public decimal Price { get; set; }
     public string? Description { get; set; }
-
 }
