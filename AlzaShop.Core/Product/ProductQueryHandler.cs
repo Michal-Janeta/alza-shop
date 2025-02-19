@@ -1,37 +1,34 @@
 ﻿using AlzaShop.Core.Commands;
 using AlzaShop.Core.Database;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace AlzaShop.Core.Product;
 
 public class ProductQueryHandler : IRequestHandler<ProductQuery, CommandResponse<List<Database.Entities.Product>>>
 {
     private readonly IRepository<Database.Entities.Product> repository;
+    private readonly ILogger<ProductQueryHandler> logger;
 
-    public ProductQueryHandler(IRepository<Database.Entities.Product> repository)
+    public ProductQueryHandler(IRepository<Database.Entities.Product> repository, ILogger<ProductQueryHandler> logger)
     {
         this.repository = repository;
+        this.logger = logger;
     }
 
     public async Task<CommandResponse<List<Database.Entities.Product>>> Handle(ProductQuery request, CancellationToken cancellationToken)
     {
-        var response = new CommandResponse<List<Database.Entities.Product>>();
-
         try
         {
             var result = await repository.GetAllAsync();
-            var products = new List<Database.Entities.Product>();
 
-            return new CommandResponse<List<Database.Entities.Product>>()
-            {
-                Result = result.ToList(),
-            };
+            return CommandResponse<List<Database.Entities.Product>>.Success(result.ToList());
         }
         catch (Exception ex)
         {
-            response.Errors.Add(new CommandError(ErrorCodes.ExceptionOccured, ex.Message));
+            logger.LogError(ex, $"An error occurred while loading products");
+            return CommandResponse<List<Database.Entities.Product>>.Error(
+                new CommandError(ErrorCodes.ExceptionOccured, "An error occurred while loading products"));
         }
-
-        return response;
     }
 }

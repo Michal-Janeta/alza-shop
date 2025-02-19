@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlzaShop.Api", "AlzaShop\Al
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlzaShop.Core", "AlzaShop.Core\AlzaShop.Core.csproj", "{F766FC28-715A-4ABF-B652-83369C6D5DCF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlzaShop.Tests", "AlzaShop.Tests\AlzaShop.Tests.csproj", "{18C2C07A-8AF6-4453-A724-749F290E5437}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{F766FC28-715A-4ABF-B652-83369C6D5DCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F766FC28-715A-4ABF-B652-83369C6D5DCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F766FC28-715A-4ABF-B652-83369C6D5DCF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18C2C07A-8AF6-4453-A724-749F290E5437}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18C2C07A-8AF6-4453-A724-749F290E5437}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18C2C07A-8AF6-4453-A724-749F290E5437}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18C2C07A-8AF6-4453-A724-749F290E5437}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

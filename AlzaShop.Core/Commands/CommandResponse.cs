@@ -6,7 +6,7 @@ public class CommandResponse<T>
 
     public List<CommandError> Errors { get; }
 
-    public bool IsValid => Errors.Count == 0;
+    public bool IsValid => !Errors.Any();
 
     public CommandResponse()
     {
@@ -19,28 +19,22 @@ public class CommandResponse<T>
         Result = result;
     }
 
-    public void AddError(string code, string message)
+    private CommandResponse(CommandError error)
     {
-        AddError(code, message, null);
+        Errors.Add(error);
     }
 
-    public void AddError(string code, string message, string? propertyName)
+    private CommandResponse(IEnumerable<CommandError> errors)
     {
-        Errors.Add(new CommandError(code, message, propertyName));
+        Errors.AddRange(errors);
     }
 
-    public static CommandResponse<T> EndWithError(string code, string message)
-    {
-        CommandResponse<T> commandResponse = new CommandResponse<T>();
-        commandResponse.AddError(code, message);
-        return commandResponse;
-    }
+    public static CommandResponse<T> Success(T data)
+        => new CommandResponse<T>(data);
 
-    public static CommandResponse<T> EndWithError(string code, string message, T result)
-    {
-        CommandResponse<T> commandResponse = new CommandResponse<T>();
-        commandResponse.Result = result;
-        commandResponse.AddError(code, message);
-        return commandResponse;
-    }
+    public static CommandResponse<T> Error(CommandError error)
+        => new CommandResponse<T>(error);
+
+    public static CommandResponse<T> Error(IEnumerable<CommandError> errors)
+        => new CommandResponse<T>(errors);
 }

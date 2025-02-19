@@ -1,4 +1,6 @@
 ﻿using AlzaShop.Core.Commands;
+using AlzaShop.Core.Database.Entities;
+using AlzaShop.Core.Models;
 using AlzaShop.Core.Product;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -14,10 +16,15 @@ public class ProductsController : ControllerBase
     {
     }
 
-    [HttpPost]
+    [HttpGet]
     public Task<CommandResponse<List<Core.Database.Entities.Product>>> Index() 
         => ExecuteCommand(new ProductQuery());
-    
+
+    [HttpGet("v2")]
+    public Task<CommandResponse<PagedResult<Core.Database.Entities.Product>>> IndexV2([FromQuery] PagingParameters parameters)
+        => ExecuteCommand(new ProductWithPaginationQuery(parameters.PageNumber, parameters.PageSize));
+
+
 
     [HttpGet("detail/{id}")]
     public async Task<CommandResponse<Core.Database.Entities.Product>> Detail(int id)
