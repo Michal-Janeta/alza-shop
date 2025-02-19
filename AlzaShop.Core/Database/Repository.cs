@@ -7,12 +7,15 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class, I
 {
     protected DbSet<TEntity> DbSet;
     protected readonly AlzaShopDbContext dbContext;
+    protected readonly UnitOfWork UnitOfWork;
+
     protected virtual IQueryable<TEntity> DbSetIncludeProps => DbSet.AsQueryable();
 
-    public Repository(AlzaShopDbContext dbContext)
+    public Repository(UnitOfWork unitOfWork)
     {
-        this.dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-        DbSet = dbContext.Set<TEntity>();
+        UnitOfWork = unitOfWork;
+        dbContext = unitOfWork.Context;
+        DbSet = unitOfWork.Context.Set<TEntity>();
     }
 
     public IQueryable<TEntity> GetQueryable()
@@ -29,4 +32,16 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class, I
     {
         return await DbSetIncludeProps.FirstOrDefaultAsync(m => m.Id == id);
     }
+
+    public async virtual Task SaveAsync(TEntity entity, bool saveImmediately = true)
+    {
+        DbSet.Attach(entity);
+        dbContext.Entry(entity).State = EntityState.Modified;
+
+        if (saveImmediately)
+        {
+            await UnitOfWork.SaveContext();
+        }
+    }
+
 }

@@ -36,6 +36,7 @@ using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>(
 {
     var context = serviceScope.ServiceProvider.GetService<AlzaShopDbContext>();
     context?.Database.Migrate();
+    DbInitializer.Seed(context);
 }
 
 // Configure the HTTP request pipeline.

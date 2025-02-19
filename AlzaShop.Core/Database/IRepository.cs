@@ -5,4 +5,5 @@ public interface IRepository<TEntity> where TEntity : class, new()
     IQueryable<TEntity> GetQueryable();
     Task<IEnumerable<TEntity>> GetAllAsync();
     Task<TEntity?> GetByIdAsync(int id);
+    Task SaveAsync(TEntity entity, bool saveImmediately = true);
 }

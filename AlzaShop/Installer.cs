@@ -7,5 +7,6 @@ public class Installer
     public static void Register(IServiceCollection services)
     {
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+        services.AddScoped(typeof(UnitOfWork));
     }
 }
