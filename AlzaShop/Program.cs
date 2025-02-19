@@ -13,13 +13,12 @@ builder.Services.AddSerilog((services, lc) => lc
         .Enrich.FromLogContext());
 
 builder.Services.AddDbContext<AlzaShopDbContext>(options => options.UseSqlServer("name=ConnectionStrings:AlzaShop", b => b.MigrationsAssembly("AlzaShop.Core")));
-builder.Services.AddScoped(typeof(AlzaShopDbContext), typeof(AlzaShopDbContext));
 
 builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
     cfg.RegisterServicesFromAssembly(typeof(ProductQueryHandler).Assembly);
-     cfg.AddOpenBehavior(typeof(LoggingMediatorPipeline<,>));
+    cfg.AddOpenBehavior(typeof(LoggingMediatorPipeline<,>));
 });
 
 // Add services to the container.

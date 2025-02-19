@@ -15,10 +15,16 @@ public class ProductsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<CommandResponse<List<Core.Database.Entities.Product>>> Index()
+    public Task<CommandResponse<List<Core.Database.Entities.Product>>> Index() 
+        => ExecuteCommand(new ProductQuery());
+    
+
+    [HttpGet("detail/{id}")]
+    public async Task<CommandResponse<Core.Database.Entities.Product>> Detail(int id)
     {
-        var result = await ExecuteCommand(new ProductQuery());
+        var result = await ExecuteCommand(new ProductDetailQuery(id));
 
         return result;
     }
+
 }
