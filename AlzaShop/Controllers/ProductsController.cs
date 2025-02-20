@@ -17,24 +17,23 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet]
-    public Task<CommandResponse<List<Core.Database.Entities.Product>>> Index() 
+    public Task<CommandResponse<List<Product>>> Index() 
         => ExecuteCommand(new ProductQuery());
 
     [HttpGet("v2")]
-    public Task<CommandResponse<PagedResult<Core.Database.Entities.Product>>> IndexV2([FromQuery] PagingParameters parameters)
+    public Task<CommandResponse<PagedResult<Product>>> IndexV2([FromQuery] PagingParameters parameters)
         => ExecuteCommand(new ProductWithPaginationQuery(parameters.PageNumber, parameters.PageSize));
 
 
-
     [HttpGet("detail/{id}")]
-    public Task<CommandResponse<Core.Database.Entities.Product>> Detail(int id)
+    public Task<CommandResponse<Product>> Detail(int id)
         => ExecuteCommand(new ProductDetailQuery(id));
 
     [HttpPatch("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<CommandResponse<Core.Database.Entities.Product>>> Update(int id, ProductUpdateCommand command)
+    public async Task<ActionResult<CommandResponse<Product>>> Update(int id, ProductUpdateCommand command)
     {
         if (!ModelState.IsValid)
         {

@@ -10,9 +10,4 @@ public class AlzaShopDbContext : DbContext
     }
 
     public DbSet<Entities.Product> Product { get; set; }
-
-    protected override void OnModelCreating(ModelBuilder model)
-    {
-
-    }
 }
