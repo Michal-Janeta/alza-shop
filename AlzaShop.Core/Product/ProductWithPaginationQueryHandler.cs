@@ -21,8 +21,6 @@ public class ProductWithPaginationQueryHandler : IRequestHandler<ProductWithPagi
 
     public async Task<CommandResponse<PagedResult<Database.Entities.Product>>> Handle(ProductWithPaginationQuery request, CancellationToken cancellationToken)
     {
-        var response = new CommandResponse<PagedResult<Database.Entities.Product>>();
-
         try
         {
             var totalCount = await repository.GetQueryable().CountAsync(cancellationToken);

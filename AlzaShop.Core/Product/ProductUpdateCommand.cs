@@ -8,7 +8,7 @@ public class ProductUpdateCommand : IRequest<CommandResponse<Database.Entities.P
 {
     public int Id { get; set; }
 
-    public string Description { get; set; }
+    public string? Description { get; set; }
 
     public ProductUpdateCommand(int id)
     {

@@ -22,17 +22,16 @@ public class ControllerBase : Microsoft.AspNetCore.Mvc.ControllerBase
         try
         {
             result = await Mediator.Send(command);
+
             if (result == null)
             {
-                result = new CommandResponse<T>();
-                result.Errors.Add(new CommandError(ErrorCodes.ExceptionOccured, "Command result is null"));
+                result = CommandResponse<T>.Error(new CommandError(ErrorCodes.ExceptionOccured, "Command result is null"));
                 Logger.Error($"Command {command.GetType()} is null. Command: {command}");
             }
         }
         catch (Exception ex)
         {
-            result = new CommandResponse<T>();
-            result.Errors.Add(new CommandError(ErrorCodes.ExceptionOccured, "Command failed"));
+            result = CommandResponse<T>.Error(new CommandError(ErrorCodes.ExceptionOccured, "Command failed"));
             Logger.Error(ex, $"Command {command.GetType()} failed. Command: {command} ");
         }
 

@@ -38,7 +38,7 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<CommandResponse<int>>> Update(int id, ProductUpdateCommand command)
+    public async Task<ActionResult<CommandResponse<Core.Database.Entities.Product>>> Update(int id, ProductUpdateCommand command)
     {
         if (!ModelState.IsValid)
         {

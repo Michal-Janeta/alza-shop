@@ -8,12 +8,7 @@ public class CommandResponse<T>
 
     public bool IsValid => !Errors.Any();
 
-    public CommandResponse()
-    {
-        Errors = new List<CommandError>();
-    }
-
-    public CommandResponse(T result)
+    private CommandResponse(T result)
     {
         Errors = new List<CommandError>();
         Result = result;
@@ -21,12 +16,15 @@ public class CommandResponse<T>
 
     private CommandResponse(CommandError error)
     {
-        Errors.Add(error);
+        Errors = new List<CommandError>
+        {
+            error
+        };
     }
 
     private CommandResponse(IEnumerable<CommandError> errors)
     {
-        Errors.AddRange(errors);
+        Errors = new List<CommandError>(errors);
     }
 
     public static CommandResponse<T> Success(T data)

@@ -7,7 +7,10 @@ using AlzaShop.Core.Models;
 using AlzaShop.Core.Product;
 using FluentAssertions;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Rewrite;
 using Moq;
+using System.Reflection.Metadata;
 using ILogger = Serilog.ILogger;
 
 namespace AlzaShop.Tests;
@@ -43,7 +46,7 @@ public class ProductControllerTests
         };
 
         mediatorMock.Setup(m => m.Send(It.IsAny<ProductQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new CommandResponse<List<Product>>(expectedProducts));
+            .ReturnsAsync(CommandResponse<List<Product>>.Success(expectedProducts));
 
         var result = await controller.Index();
 
@@ -67,7 +70,7 @@ public class ProductControllerTests
                 q.PageNumber == parameters.PageNumber 
                 && q.PageSize == parameters.PageSize),
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new CommandResponse<PagedResult<Product>>(expectedResult));
+            .ReturnsAsync(CommandResponse<PagedResult<Product>>.Success(expectedResult));
 
         var result = await controller.IndexV2(parameters);
 
@@ -90,7 +93,7 @@ public class ProductControllerTests
         };
 
         mediatorMock.Setup(m => m.Send(It.IsAny<ProductDetailQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new CommandResponse<Product>(expectedResult));
+            .ReturnsAsync(CommandResponse<Product>.Success(expectedResult));
 
         var result = await controller.Detail(id);
 
@@ -98,83 +101,68 @@ public class ProductControllerTests
     }
 
     [Theory]
-    [InlineData(9)]
-    public async Task Handle_WhenProductExists_UpdatesDescription(int id)
+    [InlineData(9, "New description")]
+    public async Task Update_ValidModel_ReturnsOkResult(int id, string newDescription)
     {
-        var newDescription = "Updated description";
-        var existingProduct = new Product { Id = id, Description = "Old description" };
+        var command = new ProductUpdateCommand(id)
+        {
+            Description = newDescription
+        };
 
-        repositoryMock.Setup(r => r.GetByIdAsync(id))
-            .ReturnsAsync(existingProduct);
+        var updatedProduct = new Product
+        {
+            Id = id,
+            Description = "New description",
+            Name = "Washing maschine",
+            ImgUri = "https://shop.alza.cz/images/washing.png",
+            Price = 15000
+        };
 
-        var command = new ProductUpdateCommand(id);
+        var commandResponse = CommandResponse<Product>.Success(updatedProduct);
+
+        mediatorMock.Setup(m => m.Send(It.Is<ProductUpdateCommand>(c => c.Id == id && c.Description == command.Description),
+            It.IsAny<CancellationToken>()))
+            .ReturnsAsync(commandResponse);
 
         var result = await controller.Update(id, command);
-        var data = result.;
-        result.Result. .Should().Be(newDescription);
 
-        _repositoryMock.Verify(r => r.SaveAsync(
-            It.Is<Product>(p => p.Id == id && p.Description == newDescription),
-            _cancellationToken),
-            Times.Once);
+        var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        var returnedResponse = Assert.IsType<CommandResponse<Product>>(okResult.Value);
+        Assert.True(returnedResponse.IsValid);
+        Assert.Equal(id, returnedResponse?.Result?.Id);
+        Assert.Equal(updatedProduct.Description, returnedResponse?.Result?.Description);
     }
 
     [Fact]
-    public async Task Handle_WhenProductNotFound_ReturnsError()
+    public async Task Update_InvalidModelState_ReturnsBadRequest()
     {
-        // Arrange
-        var productId = 1;
-        _repositoryMock
-            .Setup(r => r.GetByIdAsync(productId, _cancellationToken))
-            .ReturnsAsync((Product)null);
+        var command = new ProductUpdateCommand(1);
+        controller.ModelState.AddModelError("Description", "Required");
 
-        var command = new UpdateProductDescriptionCommand
-        {
-            Id = productId,
-            Description = "New description"
-        };
+        var result = await controller.Update(1, command);
 
-        // Act
-        var result = await _handler.Handle(command, _cancellationToken);
-
-        // Assert
-        result.IsSuccess.Should().BeFalse();
-        result.Errors.Should().ContainSingle();
-        result.Errors.First().Code.Should().Be(ErrorCodes.NotFoundException);
-
-        _repositoryMock.Verify(r => r.SaveAsync(It.IsAny<Product>(), _cancellationToken), Times.Never);
+        Assert.IsType<BadRequestResult>(result.Result);
     }
 
     [Fact]
-    public async Task Handle_WhenExceptionOccurs_ReturnsError()
+    public async Task Update_ProductDoesNotExist_ReturnsNotFound()
     {
-        // Arrange
-        var productId = 1;
-        _repositoryMock
-            .Setup(r => r.GetByIdAsync(productId, _cancellationToken))
-            .ThrowsAsync(new Exception("Test exception"));
-
-        var command = new UpdateProductDescriptionCommand
-        {
-            Id = productId,
-            Description = "New description"
+        var productId = 99;
+        var command = new ProductUpdateCommand(productId)
+        { 
+            Description = "" 
         };
 
-        // Act
-        var result = await _handler.Handle(command, _cancellationToken);
+        var response = CommandResponse<Product>.Error(new CommandError(ErrorCodes.NotFoundException, "Product not found"));
 
-        // Assert
-        result.IsSuccess.Should().BeFalse();
-        result.Errors.Should().ContainSingle();
-        result.Errors.First().Code.Should().Be(ErrorCodes.ExceptionOccured);
+        mediatorMock.Setup(m => m.Send(It.IsAny<ProductUpdateCommand>(), default)).ReturnsAsync(response);
 
-        _loggerMock.Verify(
-            x => x.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.IsAny<It.IsAnyType>(),
-                It.IsAny<Exception>(),
-                (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()),
-            Times.Once);
+        var result = await controller.Update(productId, command);
+
+        var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        var returnedResponse = Assert.IsType<CommandResponse<Product>>(okResult.Value);
+
+        Assert.Null(returnedResponse.Result);
+        Assert.Contains(ErrorCodes.NotFoundException, returnedResponse.Errors.Select(x => x.Code));
     }
 }
