@@ -11,15 +11,13 @@ public class LoggingMediatorPipeline<TRequest, TResponse> : IPipelineBehavior<TR
 
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        string requestName = request.GetType().Name;
-        string requestGuid = Guid.NewGuid().ToString();
-        string requestNameWithGuid = $"{requestName} [{requestGuid}]";
+        string requestDescription = $"{request.GetType().Name} [{Guid.NewGuid().ToString()}]";
 
-        logger.Information("[Začátek] {Id}", requestNameWithGuid);
+        logger.Information("[Request begin] {Id}", requestDescription);
         TResponse response;
 
         response = await next();
-        logger.Information("[Konec] {Id}", requestNameWithGuid);
+        logger.Information("[Request end] {Id}", requestDescription);
         return response;
     }
 }
