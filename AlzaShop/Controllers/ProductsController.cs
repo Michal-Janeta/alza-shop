@@ -27,12 +27,8 @@ public class ProductsController : ControllerBase
 
 
     [HttpGet("detail/{id}")]
-    public async Task<CommandResponse<Core.Database.Entities.Product>> Detail(int id)
-    {
-        var result = await ExecuteCommand(new ProductDetailQuery(id));
-
-        return result;
-    }
+    public Task<CommandResponse<Core.Database.Entities.Product>> Detail(int id)
+        => ExecuteCommand(new ProductDetailQuery(id));
 
     [HttpPatch("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
